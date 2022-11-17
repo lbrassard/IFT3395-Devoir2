@@ -15,7 +15,14 @@ class SVM:
         m : int (num_classes)
         returns : numpy array of shape (n, m)
         """
-        pass
+        n = y.shape[0]
+
+        labels = np.full((n, m), -1)
+
+        for index, label in enumerate(y):
+            labels[index, label] = 1
+
+        return labels
 
     def compute_loss(self, x, y):
         """
@@ -23,7 +30,23 @@ class SVM:
         y : numpy array of shape (minibatch size, num_classes)
         returns : float
         """
-        pass
+        total_loss = 0
+
+        n = x.shape[0]
+        m = y.shape[1]
+
+        # itération sur les classes
+        for j in range(m):
+
+            # itération sur les exemples (xi, yi)
+            for i in range(n):
+
+                total_loss += np.power(np.maximum(0.0, 2 - np.dot(np.transpose(self.w)[j], x[i]) * y[i][j]), 2) / n
+
+        # ajouter la régularisation
+        total_loss += (self.C / 2) * (self.w ** 2).sum()
+
+        return total_loss
 
     def compute_gradient(self, x, y):
         """
@@ -31,7 +54,23 @@ class SVM:
         y : numpy array of shape (minibatch size, num_classes)
         returns : numpy array of shape (num_features, num_classes)
         """
-        pass
+        # shape (n, m) = (5882, 6)
+        predictions = np.dot(x, self.w)
+
+        # shape (n, m) = (5882, 6)
+        # FIXME : DOUTE ici
+        # activation = ((2 - y * predictions) > 0).astype('float')
+        activation = 2 * np.maximum(0.0, (2 - y * predictions))
+
+        # shape (f, m) (562, 6)
+        regularisation = self.C * self.w
+
+        # CODE du labo 4 :
+        # gradient = -((activation * y)[:, np.newaxis] * x).mean(axis=0) + regularisation
+        # FIXME : DOUTE ici
+        gradient = -(np.dot(x.T, activation * y))
+
+        return gradient + regularisation
 
     # Batcher function
     def minibatch(self, iterable1, iterable2, size=1):
@@ -46,7 +85,29 @@ class SVM:
         x : numpy array of shape (num_examples_to_infer, num_features)
         returns : numpy array of shape (num_examples_to_infer, num_classes)
         """
-        pass
+        n = x.shape[0]
+        m = self.w.shape[1]
+
+        y_inferred = np.full((n, m), -1)
+
+        # itération sur les x
+        for i in range(n):
+
+            loss_by_class = []
+
+            # itération sur les classes
+            for j in range(m):
+
+                y = np.full(6, -1)
+                y[j] = 1
+                loss = self.compute_loss(x[i][np.newaxis, :], y[np.newaxis, :])
+                loss_by_class.append(loss)
+
+            class_index = np.argmin(loss_by_class)
+
+            y_inferred[i][class_index] = 1
+
+        return y_inferred
 
     def compute_accuracy(self, y_inferred, y):
         """
@@ -54,7 +115,14 @@ class SVM:
         y : numpy array of shape (num_examples, num_classes)
         returns : float
         """
-        pass
+        n_accurate = 0
+        n_test = len(y_inferred)
+        for i in range(n_test):
+            if np.array_equal(y_inferred[i], y[i]):
+                n_accurate += 1
+
+        accuracy = n_accurate / n_test
+        return accuracy
 
     def fit(self, x_train, y_train, x_test, y_test):
         """
@@ -135,19 +203,42 @@ def load_data():
     return x_train, y_train, x_test, y_test
 
 
+# if __name__ == "__main__":
+#
+#     x_train, y_train, x_test, y_test = load_data()
+#
+#     print("Fitting the model...")
+#     svm = SVM(eta=0.0001, C=2, niter=200, batch_size=100, verbose=False)
+#     train_losses, train_accs, test_losses, test_accs = svm.fit(x_train, y_train, x_test, y_test)
+#
+#     # # to infer after training, do the following:
+#     # y_inferred = svm.infer(x_test)
+#
+#     ## to compute the gradient or loss before training, do the following:
+#     # y_train_ova = svm.make_one_versus_all_labels(y_train, 6) # one-versus-all labels
+#     # svm.w = np.zeros([x_train.shape[1], 6])
+#     # grad = svm.compute_gradient(x_train, y_train_ova)
+#     # loss = svm.compute_loss(x_train, y_train_ova)
+
+
+# FIXME : REMOVE LATER : j'utilise cette section pour imprimer le gradient
 if __name__ == "__main__":
 
     x_train, y_train, x_test, y_test = load_data()
 
     print("Fitting the model...")
-    svm = SVM(eta=0.0001, C=2, niter=200, batch_size=100, verbose=False)
+    svm = SVM(eta=0.0001, C=2, niter=1, batch_size=100, verbose=False)
     train_losses, train_accs, test_losses, test_accs = svm.fit(x_train, y_train, x_test, y_test)
 
     # # to infer after training, do the following:
     # y_inferred = svm.infer(x_test)
 
-    ## to compute the gradient or loss before training, do the following:
-    # y_train_ova = svm.make_one_versus_all_labels(y_train, 6) # one-versus-all labels
-    # svm.w = np.zeros([x_train.shape[1], 6])
-    # grad = svm.compute_gradient(x_train, y_train_ova)
-    # loss = svm.compute_loss(x_train, y_train_ova)
+    # ## to compute the gradient or loss before training, do the following:
+    y_train_ova = svm.make_one_versus_all_labels(y_train, 6) # one-versus-all labels
+    svm.w = np.zeros([x_train.shape[1], 6])
+    #
+    loss = svm.compute_loss(x_train, y_train_ova)
+    print(loss)
+    #
+    grad = svm.compute_gradient(x_train, y_train_ova)
+    print(grad)
