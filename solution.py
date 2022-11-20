@@ -1,4 +1,5 @@
 import numpy as np
+# import matplotlib.pyplot as plt
 
 
 class SVM:
@@ -54,21 +55,18 @@ class SVM:
         y : numpy array of shape (minibatch size, num_classes)
         returns : numpy array of shape (num_features, num_classes)
         """
+        n = x.shape[0]
+
         # shape (n, m) = (5882, 6)
         predictions = np.dot(x, self.w)
 
         # shape (n, m) = (5882, 6)
-        # FIXME : DOUTE ici
-        # activation = ((2 - y * predictions) > 0).astype('float')
         activation = 2 * np.maximum(0.0, (2 - y * predictions))
 
         # shape (f, m) (562, 6)
         regularisation = self.C * self.w
 
-        # CODE du labo 4 :
-        # gradient = -((activation * y)[:, np.newaxis] * x).mean(axis=0) + regularisation
-        # FIXME : DOUTE ici
-        gradient = -(np.dot(x.T, activation * y))
+        gradient = -(np.dot(x.T, activation * y)) / n
 
         return gradient + regularisation
 
@@ -220,25 +218,77 @@ def load_data():
 #     # grad = svm.compute_gradient(x_train, y_train_ova)
 #     # loss = svm.compute_loss(x_train, y_train_ova)
 
-
-# FIXME : REMOVE LATER : j'utilise cette section pour imprimer le gradient
 if __name__ == "__main__":
-
     x_train, y_train, x_test, y_test = load_data()
 
-    print("Fitting the model...")
-    svm = SVM(eta=0.0001, C=2, niter=1, batch_size=100, verbose=False)
-    train_losses, train_accs, test_losses, test_accs = svm.fit(x_train, y_train, x_test, y_test)
+    CS = [1, 5, 10]
+    niter = 3   # FIXME : Utiliser 200 quand les graphs seront bien mis en forme
 
-    # # to infer after training, do the following:
-    # y_inferred = svm.infer(x_test)
+    results = []
 
-    # ## to compute the gradient or loss before training, do the following:
-    y_train_ova = svm.make_one_versus_all_labels(y_train, 6) # one-versus-all labels
-    svm.w = np.zeros([x_train.shape[1], 6])
+    for C in CS:
+        print("Fitting the model... with C = {}".format(C))
+        svm = SVM(eta=0.0001, C=C, niter=niter, batch_size=100, verbose=False)
+        # train_losses, train_accs, test_losses, test_accs = svm.fit(x_train, y_train, x_test, y_test)
+        result = svm.fit(x_train, y_train, x_test, y_test)
+        results.append(result)
+
+    # fig, axs = plt.subplots(2, 2)
     #
-    loss = svm.compute_loss(x_train, y_train_ova)
-    print(loss)
+    # epoch = range(niter)
     #
-    grad = svm.compute_gradient(x_train, y_train_ova)
-    print(grad)
+    # a1 = axs[0, 0].plot(epoch, results[0][0], 'tab:green')
+    # a2 = axs[0, 0].plot(epoch, results[1][0], 'tab:orange')
+    # a3 = axs[0, 0].plot(epoch, results[2][0], 'tab:red')
+    # axs[0, 0].set_title('Train Loss')
+    #
+    #
+    # axs[0, 1].plot(epoch, results[0][1], 'tab:green')
+    # axs[0, 1].plot(epoch, results[1][1], 'tab:orange')
+    # axs[0, 1].plot(epoch, results[2][1], 'tab:red')
+    # axs[0, 1].set_title('Train Accuracy')
+    #
+    # axs[1, 0].plot(epoch, results[0][2], 'tab:green')
+    # axs[1, 0].plot(epoch, results[1][2], 'tab:orange')
+    # axs[1, 0].plot(epoch, results[2][2], 'tab:red')
+    # axs[1, 0].set_title('Test Loss')
+    #
+    # axs[1, 1].plot(epoch, results[0][3], 'tab:green')
+    # axs[1, 1].plot(epoch, results[1][3], 'tab:orange')
+    # axs[1, 1].plot(epoch, results[2][3], 'tab:red')
+    # axs[1, 1].set_title('Test Accuracy')
+    #
+    # # axs[0][1].set_xticklabels(['a', 'b', 'c', 'd'])
+    #
+    # fig.legend([a1, a2, a3], labels=["C=1", "C=5", "C=10"], loc='upper right')
+    #
+    # plt.subplots_adjust(left=0.1,
+    #                     bottom=0.1,
+    #                     right=0.9,
+    #                     top=0.9,
+    #                     wspace=0.4,
+    #                     hspace=0.4)
+    #
+    # plt.show()
+
+
+# if __name__ == "__main__":
+#
+#     x_train, y_train, x_test, y_test = load_data()
+#
+#     print("Fitting the model...")
+#     svm = SVM(eta=0.0001, C=2, niter=1, batch_size=100, verbose=False)
+#     train_losses, train_accs, test_losses, test_accs = svm.fit(x_train, y_train, x_test, y_test)
+#
+#     # # to infer after training, do the following:
+#     # y_inferred = svm.infer(x_test)
+#
+#     # ## to compute the gradient or loss before training, do the following:
+#     y_train_ova = svm.make_one_versus_all_labels(y_train, 6) # one-versus-all labels
+#     svm.w = np.zeros([x_train.shape[1], 6])
+#     #
+#     loss = svm.compute_loss(x_train, y_train_ova)
+#     print(loss)
+#     #
+#     grad = svm.compute_gradient(x_train, y_train_ova)
+#     print(grad)
