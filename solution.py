@@ -1,5 +1,5 @@
 import numpy as np
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 
 class SVM:
@@ -233,43 +233,43 @@ if __name__ == "__main__":
         result = svm.fit(x_train, y_train, x_test, y_test)
         results.append(result)
 
-    # fig, axs = plt.subplots(2, 2)
-    #
-    # epoch = range(niter)
-    #
-    # a1 = axs[0, 0].plot(epoch, results[0][0], 'tab:green')
-    # a2 = axs[0, 0].plot(epoch, results[1][0], 'tab:orange')
-    # a3 = axs[0, 0].plot(epoch, results[2][0], 'tab:red')
-    # axs[0, 0].set_title('Train Loss')
-    #
-    #
-    # axs[0, 1].plot(epoch, results[0][1], 'tab:green')
-    # axs[0, 1].plot(epoch, results[1][1], 'tab:orange')
-    # axs[0, 1].plot(epoch, results[2][1], 'tab:red')
-    # axs[0, 1].set_title('Train Accuracy')
-    #
-    # axs[1, 0].plot(epoch, results[0][2], 'tab:green')
-    # axs[1, 0].plot(epoch, results[1][2], 'tab:orange')
-    # axs[1, 0].plot(epoch, results[2][2], 'tab:red')
-    # axs[1, 0].set_title('Test Loss')
-    #
-    # axs[1, 1].plot(epoch, results[0][3], 'tab:green')
-    # axs[1, 1].plot(epoch, results[1][3], 'tab:orange')
-    # axs[1, 1].plot(epoch, results[2][3], 'tab:red')
-    # axs[1, 1].set_title('Test Accuracy')
-    #
-    # # axs[0][1].set_xticklabels(['a', 'b', 'c', 'd'])
-    #
-    # fig.legend([a1, a2, a3], labels=["C=1", "C=5", "C=10"], loc='upper right')
-    #
-    # plt.subplots_adjust(left=0.1,
-    #                     bottom=0.1,
-    #                     right=0.9,
-    #                     top=0.9,
-    #                     wspace=0.4,
-    #                     hspace=0.4)
-    #
-    # plt.show()
+    fig, axs = plt.subplots(2, 2)
+
+    epoch = range(niter)
+
+    a1 = axs[0, 0].plot(epoch, results[0][0], 'tab:green')
+    a2 = axs[0, 0].plot(epoch, results[1][0], 'tab:orange')
+    a3 = axs[0, 0].plot(epoch, results[2][0], 'tab:red')
+    axs[0, 0].set_title('Train Loss')
+
+
+    axs[0, 1].plot(epoch, results[0][1], 'tab:green')
+    axs[0, 1].plot(epoch, results[1][1], 'tab:orange')
+    axs[0, 1].plot(epoch, results[2][1], 'tab:red')
+    axs[0, 1].set_title('Train Accuracy')
+
+    axs[1, 0].plot(epoch, results[0][2], 'tab:green')
+    axs[1, 0].plot(epoch, results[1][2], 'tab:orange')
+    axs[1, 0].plot(epoch, results[2][2], 'tab:red')
+    axs[1, 0].set_title('Test Loss')
+
+    axs[1, 1].plot(epoch, results[0][3], 'tab:green')
+    axs[1, 1].plot(epoch, results[1][3], 'tab:orange')
+    axs[1, 1].plot(epoch, results[2][3], 'tab:red')
+    axs[1, 1].set_title('Test Accuracy')
+
+    # axs[0][1].set_xticklabels(['a', 'b', 'c', 'd'])
+
+    fig.legend([a1, a2, a3], labels=["C=1", "C=5", "C=10"], loc='upper right')
+
+    plt.subplots_adjust(left=0.1,
+                        bottom=0.1,
+                        right=0.9,
+                        top=0.9,
+                        wspace=0.4,
+                        hspace=0.4)
+
+    plt.show()
 
 
 # if __name__ == "__main__":
