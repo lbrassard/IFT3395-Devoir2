@@ -222,7 +222,7 @@ if __name__ == "__main__":
     x_train, y_train, x_test, y_test = load_data()
 
     CS = [1, 5, 10]
-    niter = 3   # FIXME : Utiliser 200 quand les graphs seront bien mis en forme
+    niter = 200
 
     results = []
 
@@ -270,25 +270,3 @@ if __name__ == "__main__":
                         hspace=0.4)
 
     plt.show()
-
-
-# if __name__ == "__main__":
-#
-#     x_train, y_train, x_test, y_test = load_data()
-#
-#     print("Fitting the model...")
-#     svm = SVM(eta=0.0001, C=2, niter=1, batch_size=100, verbose=False)
-#     train_losses, train_accs, test_losses, test_accs = svm.fit(x_train, y_train, x_test, y_test)
-#
-#     # # to infer after training, do the following:
-#     # y_inferred = svm.infer(x_test)
-#
-#     # ## to compute the gradient or loss before training, do the following:
-#     y_train_ova = svm.make_one_versus_all_labels(y_train, 6) # one-versus-all labels
-#     svm.w = np.zeros([x_train.shape[1], 6])
-#     #
-#     loss = svm.compute_loss(x_train, y_train_ova)
-#     print(loss)
-#     #
-#     grad = svm.compute_gradient(x_train, y_train_ova)
-#     print(grad)
